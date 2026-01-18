@@ -5,6 +5,45 @@
 {% block body %}
     <h1>Products</h1>
 
+    <div style="margin: 12px 0; display:flex; gap:10px; flex-wrap:wrap;">
+        <a href="{{ path('catalog_index') }}"
+           style="{{ gender is null ? 'font-weight:bold;' : '' }}">
+            All
+        </a>
+
+        <a href="{{ path('catalog_index', {gender: 'men'}) }}"
+           style="{{ gender == 'men' ? 'font-weight:bold;' : '' }}">
+            Men
+        </a>
+
+        <a href="{{ path('catalog_index', {gender: 'women'}) }}"
+           style="{{ gender == 'women' ? 'font-weight:bold;' : '' }}">
+            Women
+        </a>
+
+        <a href="{{ path('catalog_index', {gender: 'unisex'}) }}"
+           style="{{ gender == 'unisex' ? 'font-weight:bold;' : '' }}">
+            Unisex
+        </a>
+    </div>
+
+    <form method="get" action="{{ path('catalog_index') }}" style="margin: 12px 0;">
+        {% if gender %}
+            <input type="hidden" name="gender" value="{{ gender }}">
+        {% endif %}
+
+        <label for="category">Category:</label>
+        <select id="category" name="category" onchange="this.form.submit()">
+            <option value="">All categories</option>
+
+            {% for c in categories %}
+                <option value="{{ c }}" {{ c == category ? 'selected' : '' }}>
+                    {{ c }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+
     {% if products is empty %}
         <p>No products were found.</p>
     {% else %}
