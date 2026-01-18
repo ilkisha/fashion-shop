@@ -3,49 +3,64 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Product;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\SlugField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 
-class ProductCrudController extends AbstractCrudController
+final class ProductCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
         return Product::class;
     }
 
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setDefaultSort(['id' => 'DESC'])
+            ->setSearchFields(['name', 'slug', 'category']);
+    }
+
     public function configureFields(string $pageName): iterable
     {
-        return [
-            IdField::new('id')
-                ->hideOnForm(), // Скрий ID при създаване/редактиране
-            TextField::new('name')
-                ->setRequired(true),
-            TextField::new('slug')
-                ->setRequired(true)
-                ->hideOnIndex(), // Скрий slug в списъка
-            TextEditorField::new('description')
-                ->hideOnIndex(), // Скрий description в списъка (за по-компактен списък)
-            MoneyField::new('price')
-                ->setCurrency('EUR')
-                ->setRequired(true),
-            ChoiceField::new('gender')
-                ->setChoices([
-                    'Male' => 'male',
-                    'Female' => 'female'
-                ])
-                ->setRequired(true),
-            TextField::new('category')
-                ->setRequired(true),
-            IntegerField::new('stockQuantity')
-                ->setRequired(true),
-            BooleanField::new('isActive')
-                ->setRequired(true),
-        ];
+        yield IdField::new('id')->hideOnForm();
+
+        yield TextField::new('name');
+
+        yield SlugField::new('slug')
+            ->setTargetFieldName('name')
+            ->hideOnIndex();
+
+        yield ChoiceField::new('gender')
+            ->setChoices([
+                'Men' => 'men',
+                'Women' => 'women',
+                'Unisex' => 'unisex',
+            ]);
+
+        yield TextField::new('category');
+
+        yield MoneyField::new('price')
+            ->setCurrency('EUR')
+            ->setStoredAsCents(false);
+
+        yield IntegerField::new('stockQuantity');
+
+        yield BooleanField::new('isActive');
+
+        yield TextEditorField::new('description')->hideOnIndex();
+
+        yield ImageField::new('imagePath')
+            ->setBasePath('uploads/products')
+            ->setUploadDir('public/uploads/products')
+            ->setUploadedFileNamePattern('[slug]-[timestamp].[extension]');
     }
 }
