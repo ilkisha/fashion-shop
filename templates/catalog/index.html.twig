@@ -44,12 +44,14 @@
         </select>
     </form>
 
+
     {% if products is empty %}
         <p>No products were found.</p>
     {% else %}
         <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:16px;">
             {% for product in products %}
-                <div style="border:1px solid #ddd; padding:12px;">
+                <div style="border:1px solid #ddd; padding:12px; display:flex; flex-direction:column; gap:10px;">
+
                     {% if product.imagePath %}
                         <img
                             src="{{ asset('uploads/products/' ~ product.imagePath) }}"
@@ -58,12 +60,22 @@
                         >
                     {% endif %}
 
-                    <h3 style="margin:10px 0 6px;">
+                    <h3 style="margin:0;">
                         <a href="{{ path('catalog_show', {slug: product.slug}) }}">{{ product.name }}</a>
                     </h3>
 
-                    <div>{{ product.category }} • {{ product.gender }}</div>
+                    <div style="opacity:0.9;">{{ product.category }} • {{ product.gender }}</div>
                     <div><strong>{{ product.price }} EUR</strong></div>
+
+                    {# ✅ бутонът е вътре в card-а и “залепва” долу #}
+                    <div style="margin-top:auto;">
+                        <form method="post" action="{{ path('cart_add', {id: product.id}) }}">
+                            <input type="hidden" name="qty" value="1">
+                            <button type="submit" style="width:100%; padding:10px;">
+                                Add to cart
+                            </button>
+                        </form>
+                    </div>
                 </div>
             {% endfor %}
         </div>

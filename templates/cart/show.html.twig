@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cart{% endblock %}
+
+{% block body %}
+    <h1>Cart</h1>
+
+    {% if lines is empty %}
+        <p>Your cart is empty.</p>
+        <p><a href="{{ path('catalog_index') }}">Go to products</a></p>
+    {% else %}
+        <table cellpadding="8" cellspacing="0" border="1" style="border-collapse:collapse; width:100%;">
+            <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th style="width:140px;">Qty</th>
+                <th>Line total</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for line in lines %}
+                <tr>
+                    <td>
+                        <a href="{{ path('catalog_show', {slug: line.product.slug}) }}">{{ line.product.name }}</a>
+                    </td>
+                    <td>{{ line.product.price }} {{ currency }}</td>
+                    <td>
+                        <form method="post" action="{{ path('cart_update', {id: line.product.id}) }}" style="display:flex; gap:8px;">
+                            <input type="number" name="quantity" min="0" value="{{ line.quantity }}" style="width:70px;">
+                            <button type="submit">Update</button>
+                        </form>
+                    </td>
+                    <td><strong>{{ line.lineTotal }} {{ currency }}</strong></td>
+                    <td>
+                        <form method="post" action="{{ path('cart_remove', {id: line.product.id}) }}">
+                            <button type="submit">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <p style="margin-top:16px;">
+            <strong>Total: {{ total }} {{ currency }}</strong>
+        </p>
+
+        <form method="post" action="{{ path('cart_clear') }}">
+            <button type="submit">Clear cart</button>
+        </form>
+    {% endif %}
+{% endblock %}
