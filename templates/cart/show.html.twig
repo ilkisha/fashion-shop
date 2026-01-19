@@ -47,6 +47,10 @@
             <strong>Total: {{ total }} {{ currency }}</strong>
         </p>
 
+        <form method="get" action="{{ path('checkout') }}">
+            <button type="submit">Checkout</button>
+        </form>
+
         <form method="post" action="{{ path('cart_clear') }}">
             <button type="submit">Clear cart</button>
         </form>

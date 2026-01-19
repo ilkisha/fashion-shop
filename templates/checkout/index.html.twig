@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+{% block title %}Checkout{% endblock %}
+
+{% block body %}
+    <h1>Checkout</h1>
+
+    <p><strong>Total: {{ total }} {{ currency }}</strong></p>
+
+    <form method="post" action="{{ path('checkout_create_order') }}">
+        <button type="submit">Create order (pending)</button>
+    </form>
+{% endblock %}
