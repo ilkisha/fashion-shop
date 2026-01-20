@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+{% block title %}Payment received{% endblock %}
+
+{% block body %}
+    <h1>Stripe Checkout completed</h1>
+    <p><strong>Order #{{ order.id }}</strong></p>
+    <p>Status: {{ order.status }}</p>
+    <p>Stripe session: {{ sessionId }}</p>
+
+    <p><a href="{{ path('catalog_index') }}">Back to shop</a></p>
+{% endblock %}

@@ -8,6 +8,7 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     product_images_dir: '%kernel.project_dir%/public/uploads/products'
+    stripe_currency: '%env(default:eur:STRIPE_CURRENCY)%'
 
 services:
     # default configuration for services in *this* file
@@ -30,3 +31,17 @@ services:
     App\Infrastructure\Storage\ProductImageStorage:
         arguments:
             $uploadDir: '%kernel.project_dir%/public/uploads/products'
+
+    Stripe\StripeClient:
+        arguments:
+            - '%env(STRIPE_SECRET_KEY)%'
+
+    App\Service\StripeCheckoutService:
+        arguments:
+            $successUrl: '%env(resolve:APP_URL)%/checkout/success?session_id={CHECKOUT_SESSION_ID}'
+            $cancelUrl: '%env(resolve:APP_URL)%/checkout/cancel'
+
+    # Stripe test card data:
+            # 4242 4242 4242 4242
+            # Any future date
+            # CVC: 123

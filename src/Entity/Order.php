@@ -35,6 +35,12 @@ class Order
     #[ORM\OneToMany(targetEntity: OrderItem::class, mappedBy: 'order', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $orderItems;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $stripeSessionId = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $paidAt = null;
+
     public function __construct()
     {
         $this->status = 'pending';
@@ -81,7 +87,7 @@ class Order
         return $this->user;
     }
 
-    public function setUser(?User $user): static
+    public function setUser(User $user): static
     {
         $this->user = $user;
         return $this;
@@ -129,5 +135,25 @@ class Order
     {
         $this->createdAt = $createdAt;
         return $this;
+    }
+
+    public function getStripeSessionId(): ?string
+    {
+        return $this->stripeSessionId;
+    }
+
+    public function setStripeSessionId(?string $stripeSessionId): void
+    {
+        $this->stripeSessionId = $stripeSessionId;
+    }
+
+    public function getPaidAt(): ?\DateTimeImmutable
+    {
+        return $this->paidAt;
+    }
+
+    public function setPaidAt(?\DateTimeImmutable $paidAt): void
+    {
+        $this->paidAt = $paidAt;
     }
 }

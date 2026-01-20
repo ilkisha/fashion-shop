@@ -5,6 +5,7 @@
     "prefer-stable": true,
     "require": {
         "php": ">=8.2",
+        "ext-bcmath": "*",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "doctrine/dbal": "^3",
@@ -12,6 +13,7 @@
         "doctrine/doctrine-migrations-bundle": "^3.7",
         "doctrine/orm": "^3.6",
         "easycorp/easyadmin-bundle": "^4.27",
+        "stripe/stripe-php": "^19.2",
         "symfony/asset": "7.4.*",
         "symfony/asset-mapper": "7.4.*",
         "symfony/console": "7.4.*",
@@ -23,8 +25,7 @@
         "symfony/security-bundle": "7.4.*",
         "symfony/twig-bundle": "7.4.*",
         "symfony/validator": "7.4.*",
-        "symfony/yaml": "7.4.*",
-        "ext-bcmath": "*"
+        "symfony/yaml": "7.4.*"
     },
     "config": {
         "allow-plugins": {
