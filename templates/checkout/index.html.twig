@@ -1,12 +1,50 @@
 {% extends 'base.html.twig' %}
+
 {% block title %}Checkout{% endblock %}
 
 {% block body %}
     <h1>Checkout</h1>
 
-    <p><strong>Total: {{ total }} {{ currency }}</strong></p>
+    <div style="max-width: 600px;">
+        <div class="card">
+            <div class="card-body">
+                <h2 style="margin-bottom: 1.5rem;">Order Summary</h2>
 
-    <form method="post" action="{{ path('checkout_create_order') }}">
-        <button type="submit">Create order (pending)</button>
-    </form>
+                <table style="width: 100%; margin-bottom: 1.5rem;">
+                    {% for line in lines %}
+                        <tr>
+                            <td style="padding: 0.5rem 0;">
+                                {{ line.product.name }}
+                                <span class="text-muted">× {{ line.quantity }}</span>
+                            </td>
+                            <td style="padding: 0.5rem 0; text-align: right; font-weight: 500;">
+                                {{ line.lineTotal }} {{ currency }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+
+                <hr style="border: none; border-top: 2px solid var(--color-border); margin: 1rem 0;">
+
+                <div style="display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem;">
+                    <span>Total</span>
+                    <span style="color: var(--color-accent);">{{ total }} {{ currency }}</span>
+                </div>
+
+                <form method="post" action="{{ path('checkout_create_order') }}">
+                    <button type="submit" class="btn btn-success btn-lg btn-block">
+                        💳 Pay with Stripe
+                    </button>
+                </form>
+
+                <p class="text-center text-muted mt-2" style="font-size: 0.85rem;">
+                    🔒 Secure payment powered by Stripe
+                </p>
+            </div>
+        </div>
+
+        <p class="text-center mt-2">
+            <a href="{{ path('cart_show') }}">← Back to cart</a>
+        </p>
+    </div>
 {% endblock %}

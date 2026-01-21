@@ -1,11 +1,42 @@
 {% extends 'base.html.twig' %}
-{% block title %}Payment received{% endblock %}
+
+{% block title %}Payment Successful{% endblock %}
 
 {% block body %}
-    <h1>Stripe Checkout completed</h1>
-    <p><strong>Order #{{ order.id }}</strong></p>
-    <p>Status: {{ order.status }}</p>
-    <p>Stripe session: {{ sessionId }}</p>
+    <div class="text-center" style="padding: 2rem 1rem;">
+        <div class="status-icon status-success">✅</div>
+        <h1>Payment Successful!</h1>
+        <p class="text-muted" style="font-size: 1.1rem; margin-bottom: 2rem;">
+            Thank you for your purchase
+        </p>
 
-    <p><a href="{{ path('catalog_index') }}">Back to shop</a></p>
+        <div class="card" style="max-width: 500px; margin: 0 auto 2rem;">
+            <div class="card-body">
+                <table style="width: 100%; text-align: left;">
+                    <tr>
+                        <td class="text-muted" style="padding: 0.5rem 0;">Order Number</td>
+                        <td style="padding: 0.5rem 0; font-weight: 600;">#{{ order.id }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted" style="padding: 0.5rem 0;">Status</td>
+                        <td style="padding: 0.5rem 0;">
+                            <span style="background: #d4edda; color: #155724; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.85rem; font-weight: 500;">
+                                {{ order.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted" style="padding: 0.5rem 0;">Stripe Session</td>
+                        <td style="padding: 0.5rem 0; font-family: monospace; font-size: 0.8rem; word-break: break-all;">
+                            {{ sessionId }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <a href="{{ path('catalog_index') }}" class="btn btn-primary btn-lg">
+            Continue Shopping →
+        </a>
+    </div>
 {% endblock %}
