@@ -72,12 +72,13 @@ CVC: 123
 - Docker Compose
 
 ### Setup
-bash
+```bash
 docker compose up -d --build
 docker compose exec php composer install
 docker compose exec php php bin/console doctrine:migrations:migrate
 
 # Optional demo data
 docker compose exec php php bin/console doctrine:fixtures:load
+```
 
 Open http://localhost:8080
