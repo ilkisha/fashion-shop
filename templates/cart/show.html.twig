@@ -25,26 +25,38 @@
                     <td>
                         <a href="{{ path('catalog_show', {slug: line.product.slug}) }}">{{ line.product.name }}</a>
                     </td>
+
                     <td>{{ line.product.price }} {{ currency }}</td>
+
                     <td>
-                        <form method="post" action="{{ path('cart_update', {id: line.product.id}) }}" style="display:flex; gap:8px;">
-                            <input type="number" name="quantity" min="0" value="{{ line.quantity }}" style="width:70px;">
-                            <button type="submit">Update</button>
+                        <form method="post"
+                              action="{{ path('cart_update', { id: line.product.id }) }}"
+                              class="js-cart-update"
+                              data-product-id="{{ line.product.id }}">
+                            <input type="number" name="qty" class="js-qty" value="{{ line.quantity }}" min="0">
+                            <button type="submit" class="js-update-btn">Update</button>
                         </form>
                     </td>
-                    <td><strong>{{ line.lineTotal }} {{ currency }}</strong></td>
+
+                    <td>
+                        <strong>
+                            <span class="js-line-total" data-product-id="{{ line.product.id }}">{{ line.lineTotal }}</span> {{ currency }}
+                        </strong>
+                    </td>
+
                     <td>
                         <form method="post" action="{{ path('cart_remove', {id: line.product.id}) }}">
                             <button type="submit">Remove</button>
                         </form>
                     </td>
                 </tr>
+
             {% endfor %}
             </tbody>
         </table>
 
         <p style="margin-top:16px;">
-            <strong>Total: {{ total }} {{ currency }}</strong>
+            <strong>Total: <span id="js-cart-total">{{ total }}</span> {{ currency }}</strong>
         </p>
 
         <form method="get" action="{{ path('checkout') }}">
@@ -55,4 +67,13 @@
             <button type="submit">Clear cart</button>
         </form>
     {% endif %}
+
 {% endblock %}
+
+    {% block javascripts %}
+        {{ parent() }}
+        <script src="{{ asset('js/cart.js') }}" defer></script>
+    {% endblock %}
+
+
+

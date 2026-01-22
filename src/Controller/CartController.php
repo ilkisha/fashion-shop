@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class CartController extends AbstractController
 {
@@ -34,11 +35,37 @@ final class CartController extends AbstractController
     }
 
     #[Route('/cart/update/{id}', name: 'cart_update', methods: ['POST'])]
-    public function update(int $id, CartService $cart, Request $request): RedirectResponse
+    public function update(int $id, CartService $cart, Request $request): Response
     {
-        $quantity = (int) $request->request->get('quantity', 1);
+        $quantity = (int) $request->request->get('qty', 1);
         $cart->updateItem($id, $quantity);
 
+        $wantsJson =
+            $request->isXmlHttpRequest()
+            || str_contains((string) $request->headers->get('Accept'), 'application/json');
+
+        if ($wantsJson) {
+            $summary = $cart->getSummary();
+
+            $lineTotal = '0.00';
+            foreach ($summary['lines'] as $line) {
+                if ($line['product']->getId() === $id) {
+                    $lineTotal = $line['lineTotal'];
+                    break;
+                }
+            }
+
+            return new JsonResponse([
+                'ok' => true,
+                'productId' => $id,
+                'qty' => $quantity,
+                'lineTotal' => $lineTotal,
+                'cartTotal' => $summary['total'],
+                'isRemoved' => $quantity <= 0,
+            ]);
+        }
+
+        // fallback if JS is not available
         return $this->redirectToRoute('cart_show');
     }
 
