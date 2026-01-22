@@ -1,7 +1,22 @@
 {% extends 'base.html.twig' %}
-{% block title %}Payment cancelled{% endblock %}
+
+{% block title %}Payment Cancelled{% endblock %}
 
 {% block body %}
-    <h1>Payment cancelled</h1>
-    <p><a href="{{ path('cart_show') }}">Back to cart</a></p>
+    <div class="text-center" style="padding: 2rem 1rem;">
+        <div class="status-icon status-warning">⚠️</div>
+        <h1>Payment Cancelled</h1>
+        <p class="text-muted" style="font-size: 1.1rem; margin-bottom: 2rem;">
+            Your payment was not completed. Your cart items are still available.
+        </p>
+
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="{{ path('cart_show') }}" class="btn btn-primary btn-lg">
+                ← Return to Cart
+            </a>
+            <a href="{{ path('catalog_index') }}" class="btn btn-secondary btn-lg">
+                Continue Shopping
+            </a>
+        </div>
+    </div>
 {% endblock %}

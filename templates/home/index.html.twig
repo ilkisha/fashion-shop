@@ -1,20 +1,53 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Welcome to Fashion Shop{% endblock %}
 
 {% block body %}
-
-    <h1>Welcome</h1>
-
-    {% if app.user %}
-        <p class="mb-3">
-            You are logged in as {{ app.user.userIdentifier }}, <a href="{{ logout_path() }}">Logout</a>
+    <div class="text-center" style="padding: 3rem 1rem;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Welcome to Fashion Shop</h1>
+        <p class="text-muted" style="font-size: 1.1rem; margin-bottom: 2rem;">
+            Discover the latest trends in fashion for everyone
         </p>
-        {% else %}
-            <p class="mb-3">
-                <a href="{{ path('app_register') }}">Register</a> or
-                <a href="{{ path('app_login') }}">Login</a>
-            </p>
-    {% endif %}
 
+        <div style="margin-bottom: 2rem;">
+            <a href="{{ path('catalog_index') }}" class="btn btn-primary btn-lg">
+                Browse Products →
+            </a>
+        </div>
+
+        {% if app.user %}
+            <p class="text-muted">
+                Logged in as <strong>{{ app.user.userIdentifier }}</strong>
+            </p>
+        {% else %}
+            <p class="text-muted">
+                <a href="{{ path('app_register') }}">Create an account</a> to start shopping
+            </p>
+        {% endif %}
+    </div>
+
+    <!-- Features Section -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+        <div class="card" style="text-align: center;">
+            <div class="card-body">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🚚</div>
+                <h3>Free Shipping</h3>
+                <p class="text-muted">On orders over €50</p>
+            </div>
+        </div>
+        <div class="card" style="text-align: center;">
+            <div class="card-body">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔒</div>
+                <h3>Secure Payment</h3>
+                <p class="text-muted">Powered by Stripe</p>
+            </div>
+        </div>
+        <div class="card" style="text-align: center;">
+            <div class="card-body">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">↩️</div>
+                <h3>Easy Returns</h3>
+                <p class="text-muted">30-day return policy</p>
+            </div>
+        </div>
+    </div>
 {% endblock %}
