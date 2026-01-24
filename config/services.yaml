@@ -32,6 +32,10 @@ services:
         arguments:
             $uploadDir: '%kernel.project_dir%/public/uploads/products'
 
+    App\Controller\StripeWebhookController:
+        arguments:
+            $stripeWebhookSecret: '%env(STRIPE_WEBHOOK_SECRET)%'
+
     Stripe\StripeClient:
         arguments:
             - '%env(STRIPE_SECRET_KEY)%'
