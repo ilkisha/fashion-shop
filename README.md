@@ -65,7 +65,26 @@ This project uses **Stripe Checkout** in **test mode**.
 Any future date  
 CVC: 123
 
+
+
 ## 🐳 Run with Docker (Recommended)
+## 🔔 Stripe Webhooks (Test Mode)
+
+This project marks an order as `paid` only after receiving a Stripe webhook event:
+`checkout.session.completed`.
+
+### Local testing with Stripe CLI (recommended)
+
+1) Install Stripe CLI (Windows/macOS/Linux) from Stripe docs / GitHub releases.
+2) Login:
+3) Start webhook listener and forward events to the local app. (If we use Docker, the app will be available on http://localhost:8080 )
+4) Copy the printed signing secret (whsec_...) into .env.local - STRIPE_WEBHOOK_SECRET=whsec_...
+5) Run a checkout payment in test mode (test card 4242 4242 4242 4242).
+6) Verify in DB that the order is updated to paid and paid_at is set.
+```bash
+stripe login
+stripe listen --forward-to http://127.0.0.1:8000/stripe/webhook
+```
 
 ### Requirements
 - Docker
