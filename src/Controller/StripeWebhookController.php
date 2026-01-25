@@ -46,13 +46,17 @@ final class StripeWebhookController extends AbstractController
             $stripeSessionId = (string) ($session->id ?? '');
 
             if ($stripeSessionId !== '') {
-                $order = $orders->findOneBy(['stripeSessionId' => $stripeSessionId]);
+                try {
+                    $order = $orders->findOneBy(['stripeSessionId' => $stripeSessionId]);
 
-                // ✅ idempotent: if is paid, does nothing
-                if ($order && $order->getStatus() !== 'paid') {
-                    $order->setStatus('paid');
-                    $order->setPaidAt(new \DateTimeImmutable());
-                    $em->flush();
+                    // ✅ idempotent: if is paid, does nothing
+                    if ($order && $order->getStatus() !== 'paid') {
+                        $order->setStatus('paid');
+                        $order->setPaidAt(new \DateTimeImmutable());
+                        $em->flush();
+                    }
+                } catch (\Exception $e) {
+                    return new Response('Database error', 500);
                 }
             }
         }
