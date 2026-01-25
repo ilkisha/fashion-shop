@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Orders{% endblock %}
+
+{% block body %}
+    <h1>My Orders</h1>
+
+    {% set current = status ?? 'all' %}
+
+    <nav style="margin: 12px 0; display:flex; gap:12px;">
+        <a href="{{ path('account_orders_index') }}"
+           style="{{ current == 'all' ? 'font-weight:700;text-decoration:underline;' : '' }}">All</a>
+
+        <a href="{{ path('account_orders_index', {status: 'paid'}) }}"
+           style="{{ current == 'paid' ? 'font-weight:700;text-decoration:underline;' : '' }}">Paid</a>
+
+        <a href="{{ path('account_orders_index', {status: 'pending'}) }}"
+           style="{{ current == 'pending' ? 'font-weight:700;text-decoration:underline;' : '' }}">Pending</a>
+    </nav>
+
+
+    {% if orders is empty %}
+        <p>You have no orders yet.</p>
+        <p><a href="{{ path('catalog_index') }}">Go shopping</a></p>
+    {% else %}
+        <table cellpadding="8" cellspacing="0" border="1" style="border-collapse:collapse; width:100%;">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Created</th>
+                <th>Paid</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td>#{{ order.id }}</td>
+                    <td>{{ order.status }}</td>
+                    <td>{{ (order.totalAmount / 100)|number_format(2, '.', '') }} {{ order.currency }}</td>
+                    <td>{{ order.createdAt|date('Y-m-d H:i') }}</td>
+                    <td>
+                        {% if order.paidAt %}
+                            {{ order.paidAt|date('Y-m-d H:i') }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ path('account_orders_show', {id: order.id}) }}">View</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

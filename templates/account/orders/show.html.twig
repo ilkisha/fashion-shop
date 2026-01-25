@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Order #{{ order.id }}{% endblock %}
+
+{% block body %}
+    <h1>Order #{{ order.id }}</h1>
+
+    <p>
+        <strong>Status:</strong>
+        {% include 'account/orders/_status_badge.html.twig' with { status: order.status } %}
+        <br>
+        <strong>Created:</strong> {{ order.createdAt|date('Y-m-d H:i') }}<br>
+        <strong>Paid:</strong> {{ order.paidAt ? order.paidAt|date('Y-m-d H:i') : '—' }}
+    </p>
+
+    <table cellpadding="8" cellspacing="0" border="1" style="border-collapse:collapse; width:100%;">
+        <thead>
+        <tr>
+            <th>Product</th>
+            <th>Unit</th>
+            <th>Qty</th>
+            <th>Line total</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in order.orderItems %}
+            <tr>
+                <td>{{ item.productName }}</td>
+                <td>{{ (item.unitPrice / 100)|number_format(2, '.', '') }} {{ currency }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ (item.lineTotal / 100)|number_format(2, '.', '') }} {{ currency }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <p style="margin-top:16px;">
+        <strong>Total: {{ (order.totalAmount / 100)|number_format(2, '.', '') }} {{ currency }}</strong>
+    </p>
+
+    <p><a href="{{ path('account_orders_index') }}">← Back to orders</a></p>
+{% endblock %}
