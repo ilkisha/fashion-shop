@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Search History{% endblock %}
+
+{% block body %}
+    <h1>Search History</h1>
+
+    {% if items is empty %}
+        <p>No searches yet.</p>
+    {% else %}
+        <ul>
+            {% for q in items %}
+                <li>
+                    <a href="{{ path('catalog_index', { q: q }) }}">{{ q }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <form method="post" action="{{ path('account_search_history_clear') }}" style="margin-top: 12px;">
+            <button type="submit">Clear history</button>
+        </form>
+    {% endif %}
+{% endblock %}

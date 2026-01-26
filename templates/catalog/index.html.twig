@@ -8,23 +8,23 @@
     <!-- Filter Bar -->
     <div class="filter-bar">
         <span class="text-muted" style="font-weight: 500;">Filter:</span>
-        
-        <a href="{{ path('catalog_index') }}"
+
+        <a href="{{ path('catalog_index', { q: q, category: category }) }}"
            class="{{ gender is null ? 'active' : '' }}">
             All
         </a>
 
-        <a href="{{ path('catalog_index', {gender: 'men'}) }}"
+        <a href="{{ path('catalog_index', { gender: 'men', q: q, category: category }) }}"
            class="{{ gender == 'men' ? 'active' : '' }}">
             Men
         </a>
 
-        <a href="{{ path('catalog_index', {gender: 'women'}) }}"
+        <a href="{{ path('catalog_index', { gender: 'women', q: q, category: category }) }}"
            class="{{ gender == 'women' ? 'active' : '' }}">
             Women
         </a>
 
-        <a href="{{ path('catalog_index', {gender: 'unisex'}) }}"
+        <a href="{{ path('catalog_index', { gender: 'unisex', q: q, category: category }) }}"
            class="{{ gender == 'unisex' ? 'active' : '' }}">
             Unisex
         </a>
@@ -32,8 +32,13 @@
         <span style="margin-left: auto;"></span>
 
         <form method="get" action="{{ path('catalog_index') }}" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+
             {% if gender %}
                 <input type="hidden" name="gender" value="{{ gender }}">
+            {% endif %}
+
+            {% if q %}
+                <input type="hidden" name="q" value="{{ q }}">
             {% endif %}
 
             <label for="category" class="text-muted" style="font-weight: 500;">Category:</label>
@@ -53,10 +58,37 @@
             <div class="empty-state-icon">🔍</div>
             <h2>No products found</h2>
             <p class="text-muted">Try adjusting your filters or check back later.</p>
-            <a href="{{ path('catalog_index') }}" class="btn btn-secondary mt-2">Clear filters</a>
+            <a href="{{ path('catalog_index', { q: q }) }}" class="btn btn-secondary mt-2">Clear filters</a>
         </div>
     {% else %}
         <div class="product-grid">
+
+            <form method="get" action="{{ path('catalog_index') }}" class="card" style="margin-bottom: 16px; padding: 12px;">
+                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                    <input
+                        type="text"
+                        name="q"
+                        value="{{ q ?? '' }}"
+                        placeholder="Search products..."
+                        style="min-width:240px; padding:8px; border:1px solid #ccc; border-radius:8px;"
+                    >
+
+                    {# preserve filters when searching #}
+                    {% if gender %}
+                        <input type="hidden" name="gender" value="{{ gender }}">
+                    {% endif %}
+                    {% if category %}
+                        <input type="hidden" name="category" value="{{ category }}">
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-primary">Search</button>
+
+                    {% if q %}
+                        <a class="btn" href="{{ path('catalog_index', { gender: gender, category: category }) }}">Clear</a>
+                    {% endif %}
+                </div>
+            </form>
+
             {% for product in products %}
                 <div class="card product-card">
                     {% if product.imagePath %}
