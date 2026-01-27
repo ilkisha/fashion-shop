@@ -1,42 +1,91 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Order #{{ order.id }}{% endblock %}
+{% block title %}Order #{{ order.id }}
+{% endblock %}
 
 {% block body %}
-    <h1>Order #{{ order.id }}</h1>
+	<p class="mb-2">
+		<a href="{{ path('account_orders_index') }}" style="color: var(--color-text-muted);">
+			← Back to orders
+		</a>
+	</p>
 
-    <p>
-        <strong>Status:</strong>
-        {% include 'account/orders/_status_badge.html.twig' with { status: order.status } %}
-        <br>
-        <strong>Created:</strong> {{ order.createdAt|date('Y-m-d H:i') }}<br>
-        <strong>Paid:</strong> {{ order.paidAt ? order.paidAt|date('Y-m-d H:i') : '—' }}
-    </p>
+	<div class="card">
+		<div class="card-body">
+			<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+				<div>
+					<h1 style="margin-bottom: 0.5rem;">Order #{{ order.id }}</h1>
+					{% include 'account/orders/_status_badge.html.twig' with { status: order.status } %}
+				</div>
+				<div style="text-align: right;">
+					<div class="text-muted" style="font-size: 0.9rem;">Total Amount</div>
+					<div style="font-size: 1.75rem; font-weight: 700; color: var(--color-accent);">
+						{{ (order.totalAmount / 100)|number_format(2, '.', '') }}
+						{{ currency }}
+					</div>
+				</div>
+			</div>
 
-    <table cellpadding="8" cellspacing="0" border="1" style="border-collapse:collapse; width:100%;">
-        <thead>
-        <tr>
-            <th>Product</th>
-            <th>Unit</th>
-            <th>Qty</th>
-            <th>Line total</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for item in order.orderItems %}
-            <tr>
-                <td>{{ item.productName }}</td>
-                <td>{{ (item.unitPrice / 100)|number_format(2, '.', '') }} {{ currency }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ (item.lineTotal / 100)|number_format(2, '.', '') }} {{ currency }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+			<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; padding: 1rem; background: var(--color-bg); border-radius: var(--radius-sm);">
+				<div>
+					<div class="text-muted" style="font-size: 0.85rem;">Created</div>
+					<div style="font-weight: 500;">{{ order.createdAt|date('Y-m-d H:i') }}</div>
+				</div>
+				<div>
+					<div class="text-muted" style="font-size: 0.85rem;">Paid</div>
+					<div style="font-weight: 500;">
+						{% if order.paidAt %}
+							<span style="color: var(--color-success);">{{ order.paidAt|date('Y-m-d H:i') }}</span>
+						{% else %}
+							<span class="text-muted">Not yet paid</span>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
 
-    <p style="margin-top:16px;">
-        <strong>Total: {{ (order.totalAmount / 100)|number_format(2, '.', '') }} {{ currency }}</strong>
-    </p>
-
-    <p><a href="{{ path('account_orders_index') }}">← Back to orders</a></p>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Product</th>
+					<th style="text-align: right;">Unit Price</th>
+					<th style="text-align: center;">Qty</th>
+					<th style="text-align: right;">Line Total</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in order.orderItems %}
+					<tr>
+						<td>
+							<strong>{{ item.productName }}</strong>
+						</td>
+						<td style="text-align: right;">
+							{{ (item.unitPrice / 100)|number_format(2, '.', '') }}
+							{{ currency }}
+						</td>
+						<td style="text-align: center;">
+							{{ item.quantity }}
+						</td>
+						<td style="text-align: right;">
+							<strong style="color: var(--color-accent);">
+								{{ (item.lineTotal / 100)|number_format(2, '.', '') }}
+								{{ currency }}
+							</strong>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+			<tfoot>
+				<tr style="background: var(--color-bg);">
+					<td colspan="3" style="text-align: right; font-weight: 600;">
+						Order Total:
+					</td>
+					<td style="text-align: right; font-size: 1.25rem; font-weight: 700; color: var(--color-primary);">
+						{{ (order.totalAmount / 100)|number_format(2, '.', '') }}
+						{{ currency }}
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
 {% endblock %}
