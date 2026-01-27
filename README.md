@@ -75,7 +75,7 @@ This project marks an order as `paid` only after receiving a Stripe webhook even
 
 ### Local testing with Stripe CLI (recommended)
 
-1) Install Stripe CLI (Windows/macOS/Linux) from Stripe docs / GitHub releases.
+1) Install Stripe CLI (Windows/macOS/Linux) from Stripe docs / GitHub releases. - https://github.com/stripe/stripe-cli/releases/tag/v1.34.0
 2) Login:
 3) Start webhook listener and forward events to the local app. (If we use Docker, the app will be available on http://localhost:8080 )
 4) Copy the printed signing secret (whsec_...) into .env.local - STRIPE_WEBHOOK_SECRET=whsec_...
