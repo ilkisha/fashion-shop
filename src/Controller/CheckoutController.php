@@ -59,6 +59,21 @@ final class CheckoutController extends AbstractController
             throw $this->createAccessDeniedException('You must be logged in to place an order.');
         }
 
+        // Validate stock for all items before creating order
+        $stockErrors = [];
+        foreach ($summary['lines'] as $line) {
+            $product = $line['product'];
+            $qty = (int) $line['quantity'];
+            if ($product->getStockQuantity() < $qty) {
+                $stockErrors[] = "{$product->getName()} (only {$product->getStockQuantity()} available, you requested {$qty})";
+            }
+        }
+
+        if (!empty($stockErrors)) {
+            $this->addFlash('danger', 'Some items are out of stock: ' . implode(', ', $stockErrors));
+            return $this->redirectToRoute('cart_show');
+        }
+
         $order = new Order();
         $order->setUser($user);
         $order->setCurrency('EUR');

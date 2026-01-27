@@ -79,15 +79,20 @@
 		<div class="product-grid">
 			{% for product in products %}
 				<div class="card product-card">
-					{% if product.imagePath %}
-						<a href="{{ path('catalog_show', {slug: product.slug}) }}">
-							<img src="{{ asset('uploads/products/' ~ product.imagePath) }}" alt="{{ product.name }}">
-						</a>
-					{% else %}
-						<div style="width: 100%; height: 200px; background: var(--color-bg); display: flex; align-items: center; justify-content: center;">
-							<span style="font-size: 3rem;">👗</span>
-						</div>
-					{% endif %}
+					<div style="position: relative;">
+						{% if product.imagePath %}
+							<a href="{{ path('catalog_show', {slug: product.slug}) }}">
+								<img src="{{ asset('uploads/products/' ~ product.imagePath) }}" alt="{{ product.name }}">
+							</a>
+						{% else %}
+							<a href="{{ path('catalog_show', {slug: product.slug}) }}" style="display: block; width: 100%; height: 200px; background: var(--color-bg); display: flex; align-items: center; justify-content: center;">
+								<span style="font-size: 3rem;">👗</span>
+							</a>
+						{% endif %}
+						{% if product.stockQuantity <= 0 %}
+							<div class="out-of-stock-badge">Out of Stock</div>
+						{% endif %}
+					</div>
 
 					<div class="card-body">
 						<h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">
@@ -106,12 +111,18 @@
 						</div>
 
 						<div class="product-actions">
-							<form method="post" action="{{ path('cart_add', {id: product.id}) }}">
-								<input type="hidden" name="qty" value="1">
-								<button type="submit" class="btn btn-primary btn-block">
-									🛒 Add to cart
+							{% if product.stockQuantity > 0 %}
+								<form method="post" action="{{ path('cart_add', {id: product.id}) }}">
+									<input type="hidden" name="quantity" value="1">
+									<button type="submit" class="btn btn-primary btn-block">
+										🛒 Add to cart
+									</button>
+								</form>
+							{% else %}
+								<button type="button" class="btn btn-secondary btn-block" disabled>
+									❌ Out of Stock
 								</button>
-							</form>
+							{% endif %}
 						</div>
 					</div>
 				</div>
