@@ -59,6 +59,21 @@ final class CheckoutController extends AbstractController
             throw $this->createAccessDeniedException('You must be logged in to place an order.');
         }
 
+        // Validate stock for all items before creating order
+        $stockErrors = [];
+        foreach ($summary['lines'] as $line) {
+            $product = $line['product'];
+            $qty = (int) $line['quantity'];
+            if ($product->getStockQuantity() < $qty) {
+                $stockErrors[] = "{$product->getName()} (only {$product->getStockQuantity()} available, you requested {$qty})";
+            }
+        }
+
+        if (!empty($stockErrors)) {
+            $this->addFlash('danger', 'Some items are out of stock: ' . implode(', ', $stockErrors));
+            return $this->redirectToRoute('cart_show');
+        }
+
         $order = new Order();
         $order->setUser($user);
         $order->setCurrency('EUR');
@@ -113,7 +128,7 @@ final class CheckoutController extends AbstractController
     }
 
     #[Route('/checkout/success', name: 'checkout_success', methods: ['GET'])]
-    public function stripeSuccess(Request $request, OrderRepository $orders): Response
+    public function stripeSuccess(Request $request, OrderRepository $orders, CartService $cart): Response
     {
         $sessionId = $request->query->get('session_id');
         if (!is_string($sessionId) || $sessionId === '') {
@@ -124,6 +139,9 @@ final class CheckoutController extends AbstractController
         if (!$order) {
             throw $this->createNotFoundException();
         }
+
+        // Clear the cart after successful payment
+        $cart->clear();
 
         return $this->render('checkout/stripe_success.html.twig', [
             'order' => $order,

@@ -1,92 +1,97 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ product.name }} - Fashion Shop{% endblock %}
+{% block title %}
+	{{ product.name }}
+	- Fashion Shop
+{% endblock %}
 
 {% block body %}
-    <p class="mb-2">
-        <a href="{{ path('catalog_index') }}" style="color: var(--color-text-muted);">
-            ← Back to products
-        </a>
-    </p>
+	<p class="mb-2">
+		<a href="{{ path('catalog_index') }}" style="color: var(--color-text-muted);">
+			← Back to products
+		</a>
+	</p>
 
-    <div class="card" style="overflow: visible;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-            <!-- Product Image -->
-            <div style="padding: 1rem;">
-                {% if product.imagePath %}
-                    <img
-                        src="{{ asset('uploads/products/' ~ product.imagePath) }}"
-                        alt="{{ product.name }}"
-                        style="width: 100%; max-height: 500px; object-fit: cover; border-radius: var(--radius-sm);"
-                    >
-                {% else %}
-                    <div style="width: 100%; height: 400px; background: var(--color-bg); display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm);">
-                        <span style="font-size: 5rem;">👗</span>
-                    </div>
-                {% endif %}
-            </div>
+	<div class="card" style="overflow: visible;">
+		<div
+			style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+			<!-- Product Image -->
+			<div style="padding: 1rem;">
+				{% if product.imagePath %}
+					<img src="{{ asset('uploads/products/' ~ product.imagePath) }}" alt="{{ product.name }}" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: var(--radius-sm);">
+				{% else %}
+					<div style="width: 100%; height: 400px; background: var(--color-bg); display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm);">
+						<span style="font-size: 5rem;">👗</span>
+					</div>
+				{% endif %}
+			</div>
 
-            <!-- Product Info -->
-            <div style="padding: 2rem 2rem 2rem 0;">
-                <h1 style="margin-bottom: 1rem;">{{ product.name }}</h1>
+			<!-- Product Info -->
+			<div style="padding: 2rem 2rem 2rem 0;">
+				<h1 style="margin-bottom: 1rem;">{{ product.name }}</h1>
 
-                <div style="font-size: 2rem; font-weight: 700; color: var(--color-accent); margin-bottom: 1.5rem;">
-                    {{ product.price }} EUR
-                </div>
+				<div style="font-size: 2rem; font-weight: 700; color: var(--color-accent); margin-bottom: 1.5rem;">
+					{{ product.price }}
+					EUR
+				</div>
 
-                <table style="width: 100%; margin-bottom: 1.5rem;">
-                    <tr>
-                        <td class="text-muted" style="padding: 0.5rem 0; width: 100px;">Category</td>
-                        <td style="padding: 0.5rem 0; font-weight: 500;">{{ product.category }}</td>
-                    </tr>
-                    <tr>
-                        <td class="text-muted" style="padding: 0.5rem 0;">Gender</td>
-                        <td style="padding: 0.5rem 0; font-weight: 500;">{{ product.gender }}</td>
-                    </tr>
-                    <tr>
-                        <td class="text-muted" style="padding: 0.5rem 0;">In Stock</td>
-                        <td style="padding: 0.5rem 0;">
-                            {% if product.stockQuantity > 0 %}
-                                <span style="color: var(--color-success); font-weight: 500;">
-                                    {{ product.stockQuantity }} available
-                                </span>
-                            {% else %}
-                                <span style="color: var(--color-danger); font-weight: 500;">
-                                    Out of stock
-                                </span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                </table>
+				<table style="width: 100%; margin-bottom: 1.5rem;">
+					<tr>
+						<td class="text-muted" style="padding: 0.5rem 0; width: 100px;">Category</td>
+						<td style="padding: 0.5rem 0; font-weight: 500;">{{ product.category }}</td>
+					</tr>
+					<tr>
+						<td class="text-muted" style="padding: 0.5rem 0;">Gender</td>
+						<td style="padding: 0.5rem 0; font-weight: 500;">{{ product.gender }}</td>
+					</tr>
+					<tr>
+						<td class="text-muted" style="padding: 0.5rem 0;">In Stock</td>
+						<td style="padding: 0.5rem 0;">
+							{% if product.stockQuantity > 0 %}
+								<span style="color: var(--color-success); font-weight: 500;">
+									{{ product.stockQuantity }}
+									available
+								</span>
+							{% else %}
+								<span style="color: var(--color-danger); font-weight: 500;">
+									Out of stock
+								</span>
+							{% endif %}
+						</td>
+					</tr>
+				</table>
 
-                <form method="post" action="{{ path('cart_add', {id: product.id}) }}" style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem;">
-                    <input type="number" name="quantity" value="1" min="1" max="{{ product.stockQuantity }}" class="form-control" style="width: 80px;">
-                    <button type="submit" class="btn btn-primary btn-lg" {% if product.stockQuantity == 0 %}disabled{% endif %}>
-                        🛒 Add to Cart
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
 
-    {% if product.description %}
-        <div class="card mt-3">
-            <div class="card-body">
-                <h2>Description</h2>
-                <div style="line-height: 1.8;">{{ product.description|raw }}</div>
-            </div>
-        </div>
-    {% endif %}
+				{% if product.stockQuantity > 0 %}
+					<form method="post" action="{{ path('cart_add', {id: product.id}) }}" style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem;">
+						<input type="number" name="quantity" value="1" min="1" max="{{ product.stockQuantity }}" class="form-control" style="width: 80px;">
+						<button type="submit" class="btn btn-primary btn-lg" {% if product.stockQuantity == 0 %} disabled {% endif %}>
+							🛒 Add to Cart
+						</button>
+					</form>
+				{% endif %}
+			</div>
+		</div>
+	</div>
 
-    <!-- Responsive Styles -->
-    <style>
-        @media (max-width: 768px) {
-            .card > div[style*="grid-template-columns"] {
-                grid-template-columns: 1fr !important;
-            }
-            .card > div > div:last-child {
-                padding: 1.5rem !important;
-            }
-        }
-    </style>
+	{% if product.description %}
+		<div class="card mt-3">
+			<div class="card-body">
+				<h2>Description</h2>
+				<div style="line-height: 1.8;">{{ product.description|raw }}</div>
+			</div>
+		</div>
+	{% endif %}
+
+	<!-- Responsive Styles -->
+	<style>
+		@media(max-width: 768px) {
+			.card > div[style*="grid-template-columns"] {
+				grid-template-columns: 1fr !important;
+			}
+			.card > div > div:last-child {
+				padding: 1.5rem !important;
+			}
+		}
+	</style>
 {% endblock %}

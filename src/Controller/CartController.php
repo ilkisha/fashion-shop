@@ -25,10 +25,35 @@ final class CartController extends AbstractController
     }
 
     #[Route('/cart/add/{id}', name: 'cart_add', methods: ['POST'])]
-    public function add(int $id, CartService $cart, Request $request): RedirectResponse
+    public function add(int $id, CartService $cart, Request $request, \App\Repository\ProductRepository $productRepo): RedirectResponse
     {
+        $product = $productRepo->find($id);
+
+        // Validate product exists and is active
+        if (!$product || !$product->isActive()) {
+            $this->addFlash('danger', 'Product not found or unavailable.');
+            return $this->redirectToRoute('catalog_index');
+        }
+
         $quantity = (int) $request->request->get('quantity', 1);
-        $cart->addItem($id, max(1, $quantity));
+        $quantity = max(1, $quantity);
+
+        // Check current cart quantity for this product
+        $currentCartQty = $cart->getItems()[$id] ?? 0;
+        $totalRequested = $currentCartQty + $quantity;
+
+        // Validate stock availability
+        if ($product->getStockQuantity() < $totalRequested) {
+            $available = $product->getStockQuantity() - $currentCartQty;
+            if ($available <= 0) {
+                $this->addFlash('danger', 'Sorry, this product is out of stock.');
+            } else {
+                $this->addFlash('warning', "Only {$available} more available. You already have {$currentCartQty} in your cart.");
+            }
+            return $this->redirectToRoute('catalog_show', ['slug' => $product->getSlug()]);
+        }
+
+        $cart->addItem($id, $quantity);
 
         $this->addFlash('success', 'Product added to cart successfully.');
         return $this->redirectToRoute('cart_show');

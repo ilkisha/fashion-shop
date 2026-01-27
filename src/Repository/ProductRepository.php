@@ -16,7 +16,7 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    public function findActive(?string $gender = null, ?string $category = null): array
+    public function findActive(?string $gender = null, ?string $category = null, ?string $q = null): array
     {
         $qb = $this->createQueryBuilder('p')
             ->andWhere('p.isActive = :active')
@@ -31,6 +31,13 @@ class ProductRepository extends ServiceEntityRepository
         if ($category) {
             $qb->andWhere('p.category = :category')
                 ->setParameter('category', $category);
+        }
+
+        $q = trim((string) $q);
+
+        if ($q !== '') {
+            $qb->andWhere('LOWER(p.name) LIKE :q OR LOWER(p.description) LIKE :q')
+                ->setParameter('q', '%' . mb_strtolower($q) . '%');
         }
 
         return $qb->getQuery()->getResult();
