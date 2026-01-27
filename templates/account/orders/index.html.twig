@@ -1,59 +1,88 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}My Orders{% endblock %}
+{% block title %}My Orders
+{% endblock %}
 
 {% block body %}
-    <h1>My Orders</h1>
+	<h1>📦 My Orders</h1>
 
-    {% set current = status ?? 'all' %}
+	{% set current = status ?? 'all' %}
 
-    <nav style="margin: 12px 0; display:flex; gap:12px;">
-        <a href="{{ path('account_orders_index') }}"
-           style="{{ current == 'all' ? 'font-weight:700;text-decoration:underline;' : '' }}">All</a>
+	<!-- Filter Bar -->
+	<div class="filter-bar">
+		<span class="text-muted" style="font-weight: 500;">Status:</span>
 
-        <a href="{{ path('account_orders_index', {status: 'paid'}) }}"
-           style="{{ current == 'paid' ? 'font-weight:700;text-decoration:underline;' : '' }}">Paid</a>
+		<a href="{{ path('account_orders_index') }}" class="{{ current == 'all' ? 'active' : '' }}">
+			All
+		</a>
 
-        <a href="{{ path('account_orders_index', {status: 'pending'}) }}"
-           style="{{ current == 'pending' ? 'font-weight:700;text-decoration:underline;' : '' }}">Pending</a>
-    </nav>
+		<a href="{{ path('account_orders_index', {status: 'paid'}) }}" class="{{ current == 'paid' ? 'active' : '' }}">
+			✅ Paid
+		</a>
 
+		<a href="{{ path('account_orders_index', {status: 'pending'}) }}" class="{{ current == 'pending' ? 'active' : '' }}">
+			⏳ Pending
+		</a>
+	</div>
 
-    {% if orders is empty %}
-        <p>You have no orders yet.</p>
-        <p><a href="{{ path('catalog_index') }}">Go shopping</a></p>
-    {% else %}
-        <table cellpadding="8" cellspacing="0" border="1" style="border-collapse:collapse; width:100%;">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>Status</th>
-                <th>Total</th>
-                <th>Created</th>
-                <th>Paid</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for order in orders %}
-                <tr>
-                    <td>#{{ order.id }}</td>
-                    <td>{{ order.status }}</td>
-                    <td>{{ (order.totalAmount / 100)|number_format(2, '.', '') }} {{ order.currency }}</td>
-                    <td>{{ order.createdAt|date('Y-m-d H:i') }}</td>
-                    <td>
-                        {% if order.paidAt %}
-                            {{ order.paidAt|date('Y-m-d H:i') }}
-                        {% else %}
-                            —
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a href="{{ path('account_orders_show', {id: order.id}) }}">View</a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+	{% if orders is empty %}
+		<div class="empty-state">
+			<div class="empty-state-icon">📦</div>
+			<h2>No orders yet</h2>
+			<p class="text-muted mb-2">Start shopping to see your orders here!</p>
+			<a href="{{ path('catalog_index') }}" class="btn btn-primary">
+				Browse Products
+			</a>
+		</div>
+	{% else %}
+		<div class="card">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Order</th>
+						<th>Status</th>
+						<th>Total</th>
+						<th>Created</th>
+						<th>Paid</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for order in orders %}
+						<tr>
+							<td>
+								<strong style="color: var(--color-primary);">#{{ order.id }}</strong>
+							</td>
+							<td>
+								{% include 'account/orders/_status_badge.html.twig' with { status: order.status } %}
+							</td>
+							<td>
+								<strong style="color: var(--color-accent);">
+									{{ (order.totalAmount / 100)|number_format(2, '.', '') }}
+									{{ order.currency }}
+								</strong>
+							</td>
+							<td class="text-muted">
+								{{ order.createdAt|date('Y-m-d H:i') }}
+							</td>
+							<td>
+								{% if order.paidAt %}
+									<span style="color: var(--color-success);">
+										{{ order.paidAt|date('Y-m-d H:i') }}
+									</span>
+								{% else %}
+									<span class="text-muted">—</span>
+								{% endif %}
+							</td>
+							<td>
+								<a href="{{ path('account_orders_show', {id: order.id}) }}" class="btn btn-secondary btn-sm">
+									View Details
+								</a>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% endif %}
 {% endblock %}
