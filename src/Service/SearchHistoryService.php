@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use RuntimeException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -14,27 +15,17 @@ class SearchHistoryService
 
     public function add(string $query): void
     {
-        $query = trim($query);
+        $query = $this->normalizeQuery($query);
         if ($query === '') {
             return;
         }
 
         $session = $this->getSession();
-        $items = $session->get(self::KEY, []);
 
-        if (!is_array($items)) {
-            $items = [];
-        }
-
-        $queryLower = mb_strtolower($query);
-
-        $items = array_values(array_filter($items, static function ($item) use ($queryLower) {
-            return is_string($item) && mb_strtolower($item) !== $queryLower;
-        }));
-
-        array_unshift($items, $query);
-
-        $items = array_slice($items, 0, self::LIMIT);
+        $items = $this->getCurrentHistory($session);
+        $items = $this->removeDuplicate($items, $query);
+        $items = $this->addToFront($items, $query);
+        $items = $this->limitHistory($items);
 
         $session->set(self::KEY, $items);
     }
@@ -57,11 +48,49 @@ class SearchHistoryService
         $this->getSession()->remove(self::KEY);
     }
 
+    private function normalizeQuery(string $query): string
+    {
+        return trim($query);
+    }
+
+    private function getCurrentHistory(SessionInterface $session): array
+    {
+        $items = $session->get(self::KEY, []);
+        return is_array($items) ? $items : [];
+    }
+
+    private function removeDuplicate(array $items, string $query): array
+    {
+        $queryLower = mb_strtolower($query);
+        $filtered = [];
+
+        foreach ($items as $item) {
+            if (is_string($item) && mb_strtolower($item) !== $queryLower) {
+                $filtered[] = $item;
+            }
+        }
+
+        return $filtered;
+    }
+
+    private function addToFront(array $items, string $query): array
+    {
+        array_unshift($items, $query);
+        return $items;
+    }
+
+    private function limitHistory(array $items): array
+    {
+        return count($items) > self::LIMIT
+            ? array_slice($items, 0, self::LIMIT)
+            : $items;
+    }
+
     private function getSession(): SessionInterface
     {
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
-            throw new \RuntimeException('No current request available.');
+            throw new RuntimeException('No current request available.');
         }
 
         return $request->getSession();

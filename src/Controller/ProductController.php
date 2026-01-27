@@ -8,36 +8,46 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use App\Service\SearchHistoryService;
+use App\Dto\ProductFilterDto;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final class ProductController extends AbstractController
 {
     #[Route('/products', name: 'catalog_index', methods: ['GET'])]
-    public function index(Request $request, ProductRepository $products, SearchHistoryService $searchHistory): Response
-    {
-        $gender = $request->query->get('gender');
-        $category = $request->query->get('category');
-        $q = trim((string) $request->query->get('q', ''));
+    public function index(
+        Request $request,
+        ProductRepository $products,
+        SearchHistoryService $searchHistory,
+        ValidatorInterface $validator
+    ): Response {
+        $filter = new ProductFilterDto();
+        $filter->gender = $request->query->get('gender');
+        $filter->category = $request->query->get('category');
+        $filter->q = $request->query->get('q');
+
+        $violations = $validator->validate($filter);
+        if (count($violations) > 0) {
+            throw new BadRequestHttpException((string) $violations);
+        }
+
+        $q = trim((string) ($filter->q ?? ''));
 
         // log only for authenticated users
-        if ($q !== '' && $this->getUser()) {
+        if ($this->getUser()) {
             $searchHistory->add($q);
         }
 
-        $allowed = ['men', 'women', 'unisex'];
+        $categories = $products->findActiveCategories($filter->gender);
 
-        if (!is_string($gender) || !in_array($gender, $allowed, true)) {
-            $gender = null;
-        }
-
-        $categories = $products->findActiveCategories($gender);
-
+        $category = $filter->category;
         if (!is_string($category) || $category === '' || !in_array($category, $categories, true)) {
             $category = null;
         }
 
         return $this->render('catalog/index.html.twig', [
-            'products' => $products->findActive($gender, $category, $q),
-            'gender' => $gender,
+            'products' => $products->findActive($filter->gender, $category, $q),
+            'gender' => $filter->gender,
             'category' => $category,
             'categories' => $categories,
             'q' => $q,

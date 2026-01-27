@@ -33,7 +33,8 @@ class ProductRepository extends ServiceEntityRepository
                 ->setParameter('category', $category);
         }
 
-        $q = $q !== null ? trim($q) : '';
+        $q = trim((string) $q);
+
         if ($q !== '') {
             $qb->andWhere('LOWER(p.name) LIKE :q OR LOWER(p.description) LIKE :q')
                 ->setParameter('q', '%' . mb_strtolower($q) . '%');
