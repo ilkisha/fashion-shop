@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Fashion Shop{% endblock %}</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>👗</text></svg>">
-    
+
     <style>
         /* CSS Variables */
         :root {
@@ -484,6 +484,7 @@
                 <li><a href="{{ path('catalog_index') }}" class="nav-link">Products</a></li>
                 <li><a href="{{ path('cart_show') }}" class="nav-link cart-link">🛒 Cart</a></li>
                 {% if app.user %}
+                    <li><a href="{{ path('account_orders_index') }}">My Orders</a></li>
                     <li><a href="{{ logout_path() }}" class="nav-link">Logout</a></li>
                 {% else %}
                     <li><a href="{{ path('app_login') }}" class="nav-link">Login</a></li>
