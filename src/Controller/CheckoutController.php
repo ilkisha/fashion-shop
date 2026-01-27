@@ -113,7 +113,7 @@ final class CheckoutController extends AbstractController
     }
 
     #[Route('/checkout/success', name: 'checkout_success', methods: ['GET'])]
-    public function stripeSuccess(Request $request, OrderRepository $orders): Response
+    public function stripeSuccess(Request $request, OrderRepository $orders, CartService $cart): Response
     {
         $sessionId = $request->query->get('session_id');
         if (!is_string($sessionId) || $sessionId === '') {
@@ -124,6 +124,9 @@ final class CheckoutController extends AbstractController
         if (!$order) {
             throw $this->createNotFoundException();
         }
+
+        // Clear the cart after successful payment
+        $cart->clear();
 
         return $this->render('checkout/stripe_success.html.twig', [
             'order' => $order,

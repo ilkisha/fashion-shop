@@ -53,6 +53,16 @@ final class StripeWebhookController extends AbstractController
                     if ($order && $order->getStatus() !== 'paid') {
                         $order->setStatus('paid');
                         $order->setPaidAt(new \DateTimeImmutable());
+
+                        // ✅ Decrement stock quantity for each ordered item
+                        foreach ($order->getOrderItems() as $orderItem) {
+                            $product = $orderItem->getProduct();
+                            if ($product !== null) {
+                                $newStock = max(0, $product->getStockQuantity() - $orderItem->getQuantity());
+                                $product->setStockQuantity($newStock);
+                            }
+                        }
+
                         $em->flush();
                     }
                 } catch (\Exception $e) {

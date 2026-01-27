@@ -1,23 +1,36 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Search History{% endblock %}
+{% block title %}Search History
+{% endblock %}
 
 {% block body %}
-    <h1>Search History</h1>
+	<h1>Search History</h1>
 
-    {% if items is empty %}
-        <p>No searches yet.</p>
-    {% else %}
-        <ul>
-            {% for q in items %}
-                <li>
-                    <a href="{{ path('catalog_index', { q: q }) }}">{{ q }}</a>
-                </li>
-            {% endfor %}
-        </ul>
+	{% if items is empty %}
+		<div class="empty-state">
+			<div class="empty-state-icon">🔍</div>
+			<h2>No searches yet</h2>
+			<p class="text-muted">Your search history will appear here after you search for products.</p>
+			<a href="{{ path('catalog_index') }}" class="btn btn-primary mt-2">Browse Products</a>
+		</div>
+	{% else %}
+		<div class="card" style="padding: 1.5rem;">
+			<ul style="list-style: none; margin: 0; padding: 0;">
+				{% for q in items %}
+					<li style="padding: 0.75rem 0; border-bottom: 1px solid var(--color-border);">
+						<a href="{{ path('catalog_index', { q: q }) }}" style="display: flex; align-items: center; gap: 0.75rem; color: var(--color-text);">
+							<span style="opacity: 0.5;">🔍</span>
+							<span style="font-weight: 500;">{{ q }}</span>
+						</a>
+					</li>
+				{% endfor %}
+			</ul>
 
-        <form method="post" action="{{ path('account_search_history_clear') }}" style="margin-top: 12px;">
-            <button type="submit">Clear history</button>
-        </form>
-    {% endif %}
+			<form method="post" action="{{ path('account_search_history_clear') }}" style="margin-top: 1.5rem;">
+				<button type="submit" class="btn btn-danger">
+					🗑️ Clear History
+				</button>
+			</form>
+		</div>
+	{% endif %}
 {% endblock %}
