@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+{% block title %}Support
+{% endblock %}
+
+{% block body %}
+	<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+		<h1 style="margin: 0;">💬 Support Tickets</h1>
+		{% if not is_granted('ROLE_ADMIN') %}
+			<a class="btn btn-primary" href="{{ path('account_support_new') }}">
+				✉️ New Ticket
+			</a>
+		{% endif %}
+	</div>
+
+	{% if tickets is empty %}
+		<div class="empty-state">
+			<div class="empty-state-icon">💬</div>
+			{% if is_granted('ROLE_ADMIN') %}
+				<h2>No support tickets</h2>
+				<p class="text-muted mb-2">Users haven't created any support tickets yet. Check the admin panel to manage all tickets.</p>
+				<a href="{{ path('admin') }}" class="btn btn-primary">
+					Go to Admin Panel
+				</a>
+			{% else %}
+				<h2>No support tickets</h2>
+				<p class="text-muted mb-2">Need help? Create a support ticket and we'll get back to you.</p>
+				<a href="{{ path('account_support_new') }}" class="btn btn-primary">
+					Create Your First Ticket
+				</a>
+			{% endif %}
+		</div>
+	{% else %}
+		<div class="card">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Ticket</th>
+						<th>Subject</th>
+						<th>Status</th>
+						<th>Created</th>
+						<th>Order</th>
+						<th>Admin Response</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for t in tickets %}
+						<tr>
+							<td>
+								<strong style="color: var(--color-primary);">#{{ t.id }}</strong>
+							</td>
+							<td>
+								{% set subjectLabel = {
+									'order': '📦 Order issue',
+									'delivery': '🚚 Delivery issue',
+									'quality': '⭐ Product quality',
+									'other': '💡 Other'
+								}[t.subject] ?? t.subject %}
+								<strong>{{ subjectLabel }}</strong>
+								<div class="text-muted" style="font-size: 0.85rem; margin-top: 0.25rem;">
+									{{ t.message|length > 100 ? (t.message|slice(0, 100) ~ '...') : t.message }}
+								</div>
+							</td>
+							<td>
+								{% set statusLabel = {
+									'open': 'Open',
+									'in_progress': 'In progress',
+									'closed': 'Closed'
+								}[t.status] ?? t.status %}
+
+								{% if t.status == 'open' %}
+									<span style="display:inline-block;padding:0.35rem 0.75rem;border-radius:var(--radius-sm);background:#d1fae5;color:#065f46;font-weight:600;font-size:0.75rem;text-transform:uppercase;">
+										{{ statusLabel }}
+									</span>
+								{% elseif t.status == 'in_progress' %}
+									<span style="display:inline-block;padding:0.35rem 0.75rem;border-radius:var(--radius-sm);background:#fef3c7;color:#92400e;font-weight:600;font-size:0.75rem;text-transform:uppercase;">
+										{{ statusLabel }}
+									</span>
+								{% elseif t.status == 'closed' %}
+									<span style="display:inline-block;padding:0.35rem 0.75rem;border-radius:var(--radius-sm);background:#fee2e2;color:#991b1b;font-weight:600;font-size:0.75rem;text-transform:uppercase;">
+										{{ statusLabel }}
+									</span>
+								{% else %}
+									<span class="text-muted">{{ statusLabel }}</span>
+								{% endif %}
+							</td>
+							<td class="text-muted">
+								{{ t.createdAt|date('Y-m-d H:i') }}
+							</td>
+							<td>
+								{% if t.order %}
+									<a href="{{ path('account_orders_show', {id: t.order.id}) }}" style="color: var(--color-primary); font-weight: 500;">
+										#{{ t.order.id }}
+									</a>
+								{% else %}
+									<span class="text-muted">—</span>
+								{% endif %}
+							</td>
+							<td>
+								{% if t.adminNote %}
+									<div style="max-width: 300px;">
+										{{ t.adminNote|length > 80 ? (t.adminNote|slice(0, 80) ~ '...') : t.adminNote }}
+									</div>
+								{% else %}
+									<span class="text-muted">Awaiting response</span>
+								{% endif %}
+							</td>
+							<td>
+								<a href="{{ path('account_support_show', {id: t.id}) }}" class="btn btn-secondary btn-sm">
+									View
+								</a>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% endif %}
+{% endblock %}

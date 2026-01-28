@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+{% block title %}New Support Ticket
+{% endblock %}
+
+{% block body %}
+	<p class="mb-2">
+		<a href="{{ path('account_support_index') }}" style="color: var(--color-text-muted);">
+			← Back to support tickets
+		</a>
+	</p>
+
+	<div class="card">
+		<div class="card-body">
+			<h1 style="margin-bottom: 0.5rem;">✉️ New Support Ticket</h1>
+			<p class="text-muted" style="margin-bottom: 1.5rem;">
+				Describe your issue and we'll get back to you as soon as possible.
+			</p>
+
+			{{ form_start(form, {'attr': {'class': 'support-form'}}) }}
+			<div class="form-group">
+				{{ form_label(form.subject, 'Subject', {'label_attr': {'class': 'form-label'}}) }}
+				{{ form_widget(form.subject, {'attr': {'class': 'form-control'}}) }}
+				{{ form_errors(form.subject) }}
+			</div>
+
+			<div class="form-group">
+				{{ form_label(form.order, 'Related Order (Optional)', {'label_attr': {'class': 'form-label'}}) }}
+				{{ form_widget(form.order, {'attr': {'class': 'form-control'}}) }}
+				{{ form_errors(form.order) }}
+				<small class="text-muted">If this ticket is related to a specific order, select it here.</small>
+			</div>
+
+			<div class="form-group">
+				{{ form_label(form.message, 'Message', {'label_attr': {'class': 'form-label'}}) }}
+				{{ form_widget(form.message, {'attr': {'class': 'form-control', 'rows': 6}}) }}
+				{{ form_errors(form.message) }}
+				<small class="text-muted">Please describe your issue in detail.</small>
+			</div>
+
+			<div style="display: flex; gap: 1rem; margin-top: 1rem;">
+				<button class="btn btn-primary btn-lg" type="submit">
+					📤 Send Ticket
+				</button>
+				<a class="btn btn-secondary btn-lg" href="{{ path('account_support_index') }}">
+					Cancel
+				</a>
+			</div>
+			{{ form_end(form) }}
+		</div>
+	</div>
+
+	<style>
+		.support-form .form-group {
+			margin-bottom: 1.5rem;
+		}
+		.support-form .form-control {
+			margin-bottom: 0.25rem;
+		}
+		.support-form small {
+			display: block;
+			margin-top: 0.25rem;
+		}
+	</style>
+{% endblock %}
