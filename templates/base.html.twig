@@ -642,11 +642,14 @@
 					<li>
 						<a href="{{ path('account_search_history_index') }}" class="nav-link">Search History</a>
 					</li>
-					<li>
-						<a href="{{ path('account_orders_index') }}">My Orders</a>
+                    <li>
+                        <a href="{{ path('account_viewed_products') }}" class="nav-link">Viewed Products</a>
+                    </li>
+                    <li>
+						<a href="{{ path('account_orders_index') }}" class="nav-link">My Orders</a>
 					</li>
                     <li>
-                        <a href="{{ path('account_support_index') }}">Support</a>
+                        <a href="{{ path('account_support_index') }}" class="nav-link">Support</a>
                     </li>
 					<li>
 						<a href="{{ logout_path() }}" class="nav-link">Logout</a>

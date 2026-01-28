@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+{% block title %}Viewed Products{% endblock %}
+
+{% block body %}
+    <h1>Viewed Products</h1>
+
+    {% if products is empty %}
+        <p>No viewed products yet.</p>
+        <p><a href="{{ path('catalog_index') }}">Go to products</a></p>
+    {% else %}
+        <form method="post" action="{{ path('account_viewed_products_clear') }}">
+            <button type="submit" class="btn">Clear history</button>
+        </form>
+
+        <div class="product-grid" style="margin-top:16px;">
+            {% for product in products %}
+                <div class="card product-card">
+                    <a href="{{ path('catalog_show', {slug: product.slug}) }}">
+                        {% if product.imagePath %}
+                            <img src="{{ asset('uploads/products/' ~ product.imagePath) }}" alt="{{ product.name }}">
+                        {% else %}
+                            <div style="width: 100%; height: 200px; display:flex; align-items:center; justify-content:center;">👗</div>
+                        {% endif %}
+                    </a>
+
+                    <div class="card-body">
+                        <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">
+                            <a href="{{ path('catalog_show', {slug: product.slug}) }}">{{ product.name }}</a>
+                        </h3>
+                        <div class="text-muted" style="font-size: 0.85rem; margin-bottom: 0.5rem;">
+                            {{ product.category }} • {{ product.gender }}
+                        </div>
+                        <div style="font-size: 1.25rem; font-weight: 600;">
+                            {{ product.price }} EUR
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

@@ -11,6 +11,7 @@ use App\Service\SearchHistoryService;
 use App\Dto\ProductFilterDto;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use App\Service\ViewedProductsService;
 
 final class ProductController extends AbstractController
 {
@@ -55,13 +56,16 @@ final class ProductController extends AbstractController
     }
 
     #[Route('/products/{slug}', name: 'catalog_show', methods: ['GET'])]
-    public function show(string $slug, ProductRepository $products): Response
+    public function show(string $slug, ProductRepository $products, ViewedProductsService $viewed): Response
     {
         $product = $products->findOneActiveBySlug($slug);
 
         if (!$product) {
             throw $this->createNotFoundException();
         }
+
+        // track viewed product
+        $viewed->add((int) $product->getId());
 
         return $this->render('catalog/show.html.twig', [
             'product' => $product,

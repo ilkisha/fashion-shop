@@ -71,4 +71,40 @@ class ProductRepository extends ServiceEntityRepository
 
         return array_values(array_map(static fn (array $r) => $r['category'], $rows));
     }
+
+    /**
+     * @param int[] $ids
+     * @return Product[]
+     */
+    public function findActiveByIds(array $ids): array
+    {
+        $ids = array_values(array_filter(array_map('intval', $ids), fn ($id) => $id > 0));
+        if ($ids === []) {
+            return [];
+        }
+
+        $products = $this->createQueryBuilder('p')
+            ->andWhere('p.isActive = :active')
+            ->setParameter('active', true)
+            ->andWhere('p.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
+
+        // keep same order as ids (most recent first)
+        $map = [];
+        foreach ($products as $p) {
+            $map[$p->getId()] = $p;
+        }
+
+        $ordered = [];
+        foreach ($ids as $id) {
+            if (isset($map[$id])) {
+                $ordered[] = $map[$id];
+            }
+        }
+
+        return $ordered;
+    }
+
 }
