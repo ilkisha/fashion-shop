@@ -19,16 +19,35 @@
                 <th>Status</th>
                 <th>Created</th>
                 <th>Order</th>
+                <th>Admin reply</th>
             </tr>
             </thead>
             <tbody>
             {% for t in tickets %}
                 <tr>
                     <td>#{{ t.id }}</td>
+                    {% set subjectLabel = {
+                        'order': 'Order issue',
+                        'delivery': 'Delivery issue',
+                        'quality': 'Product quality',
+                        'other': 'Other'
+                    }[t.subject] ?? t.subject %}
                     <td>{{ t.subject }}</td>
-                    <td>{{ t.status }}</td>
+                    {% set statusLabel = {
+                        'open': 'Open',
+                        'in_progress': 'In progress',
+                        'closed': 'Closed'
+                    }[t.status] ?? t.status %}
+                    <td>{{ statusLabel }}</td>
                     <td>{{ t.createdAt|date('Y-m-d H:i') }}</td>
                     <td>{{ t.order ? ('#' ~ t.order.id) : '—' }}</td>
+                    <td>
+                        {% if t.adminNote %}
+                            {{ t.adminNote }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>

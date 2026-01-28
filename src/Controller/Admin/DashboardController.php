@@ -10,6 +10,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
+use App\Entity\SupportTicket;
+
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
@@ -17,7 +19,7 @@ class DashboardController extends AbstractDashboardController
     public function index(): Response
     {
         $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-        
+
         // Пренасочи към Products страницата
         return $this->redirect($adminUrlGenerator->setController(ProductCrudController::class)->generateUrl());
     }
@@ -31,7 +33,8 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        
+
         yield MenuItem::linkToCrud('Products', 'fa fa-tags', Product::class);
+        yield MenuItem::linkToCrud('Support Tickets', 'fa fa-life-ring', SupportTicket::class);
     }
 }
