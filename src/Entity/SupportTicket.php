@@ -5,22 +5,50 @@ namespace App\Entity;
 use App\Repository\SupportTicketRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: SupportTicketRepository::class)]
 class SupportTicket
 {
+    public const SUBJECT_ORDER = 'order';
+    public const SUBJECT_DELIVERY = 'delivery';
+    public const SUBJECT_QUALITY = 'quality';
+    public const SUBJECT_OTHER = 'other';
+    public const STATUS_OPEN = 'open';
+    public const STATUS_IN_PROGRESS = 'in_progress';
+    public const STATUS_CLOSED = 'closed';
+
+    public const SUBJECT_CHOICES = [
+        self::SUBJECT_ORDER,
+        self::SUBJECT_DELIVERY,
+        self::SUBJECT_QUALITY,
+        self::SUBJECT_OTHER,
+    ];
+
+    public const STATUS_CHOICES = [
+        self::STATUS_OPEN,
+        self::STATUS_IN_PROGRESS,
+        self::STATUS_CLOSED,
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: 'Please choose a subject.')]
+    #[Assert\Choice(choices: self::SUBJECT_CHOICES, message: 'Invalid subject.')]
     private ?string $subject = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message: 'Message is required.')]
+    #[Assert\Length(min: 10, minMessage: 'Message must be at least {{ limit }} characters.')]
     private ?string $message = null;
 
     #[ORM\Column(length: 20)]
+    #[Assert\Choice(choices: self::STATUS_CHOICES, message: 'Invalid status.')]
     private ?string $status = null;
 
     #[ORM\Column]
