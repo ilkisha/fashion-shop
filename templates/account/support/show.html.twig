@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+{% block title %}Ticket #{{ ticket.id }}
+{% endblock %}
+
+{% block body %}
+	<p class="mb-2">
+		<a href="{{ path('account_support_index') }}" style="color: var(--color-text-muted);">
+			← Back to support tickets
+		</a>
+	</p>
+
+	<div class="card">
+		<div class="card-body">
+			<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+				<div>
+					<h1 style="margin-bottom: 0.5rem;">Ticket #{{ ticket.id }}</h1>
+					{% set statusLabel = {
+						'open': 'Open',
+						'in_progress': 'In progress',
+						'closed': 'Closed'
+					}[ticket.status] ?? ticket.status %}
+
+					{% if ticket.status == 'open' %}
+						<span style="display:inline-block;padding:0.35rem 0.75rem;border-radius:var(--radius-sm);background:#d1fae5;color:#065f46;font-weight:600;font-size:0.75rem;text-transform:uppercase;">
+							{{ statusLabel }}
+						</span>
+					{% elseif ticket.status == 'in_progress' %}
+						<span style="display:inline-block;padding:0.35rem 0.75rem;border-radius:var(--radius-sm);background:#fef3c7;color:#92400e;font-weight:600;font-size:0.75rem;text-transform:uppercase;">
+							{{ statusLabel }}
+						</span>
+					{% elseif ticket.status == 'closed' %}
+						<span style="display:inline-block;padding:0.35rem 0.75rem;border-radius:var(--radius-sm);background:#fee2e2;color:#991b1b;font-weight:600;font-size:0.75rem;text-transform:uppercase;">
+							{{ statusLabel }}
+						</span>
+					{% endif %}
+				</div>
+			</div>
+
+			<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; padding: 1rem; background: var(--color-bg); border-radius: var(--radius-sm);">
+				<div>
+					<div class="text-muted" style="font-size: 0.85rem;">Subject</div>
+					<div style="font-weight: 500;">
+						{% set subjectLabel = {
+							'order': '📦 Order issue',
+							'delivery': '🚚 Delivery issue',
+							'quality': '⭐ Product quality',
+							'other': '💡 Other'
+						}[ticket.subject] ?? ticket.subject %}
+						{{ subjectLabel }}
+					</div>
+				</div>
+				<div>
+					<div class="text-muted" style="font-size: 0.85rem;">Created</div>
+					<div style="font-weight: 500;">{{ ticket.createdAt|date('Y-m-d H:i') }}</div>
+				</div>
+				{% if ticket.updatedAt %}
+					<div>
+						<div class="text-muted" style="font-size: 0.85rem;">Last Updated</div>
+						<div style="font-weight: 500;">{{ ticket.updatedAt|date('Y-m-d H:i') }}</div>
+					</div>
+				{% endif %}
+				{% if ticket.order %}
+					<div>
+						<div class="text-muted" style="font-size: 0.85rem;">Related Order</div>
+						<div>
+							<a href="{{ path('account_orders_show', {id: ticket.order.id}) }}" style="color: var(--color-primary); font-weight: 500;">
+								#{{ ticket.order.id }}
+							</a>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+
+			<div style="margin-bottom: 1.5rem;">
+				<h3 style="margin-bottom: 0.75rem;">Your Message</h3>
+				<div style="background: var(--color-bg); padding: 1rem; border-radius: var(--radius-sm); line-height: 1.6;">
+					{{ ticket.message|nl2br }}
+				</div>
+			</div>
+
+			{% if ticket.adminNote %}
+				<div style="margin-bottom: 1.5rem; padding: 1rem; background: #dbeafe; border-left: 4px solid #1e40af; border-radius: var(--radius-sm);">
+					<div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+						<span style="font-size: 1.25rem;">💬</span>
+						<h3 style="margin: 0; color: #1e40af;">Admin Response</h3>
+					</div>
+					<div style="line-height: 1.6; color: #1e3a8a;">
+						{{ ticket.adminNote|nl2br }}
+					</div>
+				</div>
+			{% else %}
+				<div style="padding: 1rem; background: var(--color-bg); border-radius: var(--radius-sm); text-align: center;">
+					<p class="text-muted" style="margin: 0;">
+						⏳ Awaiting admin response. We'll get back to you soon!
+					</p>
+				</div>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}

@@ -23,17 +23,27 @@ final class SupportTicketController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
+        // Admins see all tickets, regular users see only their own
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $ticketsList = $tickets->findBy([], ['createdAt' => 'DESC']);
+        } else {
+            $ticketsList = $tickets->findBy(['user' => $user], ['createdAt' => 'DESC']);
+        }
+
         return $this->render('account/support/index.html.twig', [
-            'tickets' => $tickets->findBy(
-                ['user' => $user],
-                ['createdAt' => 'DESC']
-            ),
+            'tickets' => $ticketsList,
         ]);
     }
 
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
+        // Prevent admins from creating tickets - they should use admin panel to manage tickets
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('warning', 'Admins cannot create support tickets. Please use the admin panel to manage tickets.');
+            return $this->redirectToRoute('admin');
+        }
+
         /** @var User $user */
         $user = $this->getUser();
 
@@ -55,6 +65,24 @@ final class SupportTicketController extends AbstractController
 
         return $this->render('account/support/new.html.twig', [
             'form' => $form,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'show', methods: ['GET'])]
+    public function show(int $id, SupportTicketRepository $tickets): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        // Find ticket and ensure it belongs to current user (unless admin)
+        $ticket = $tickets->find($id);
+        
+        if (!$ticket || (!$this->isGranted('ROLE_ADMIN') && $ticket->getUser() !== $user)) {
+            throw $this->createNotFoundException('Ticket not found.');
+        }
+
+        return $this->render('account/support/show.html.twig', [
+            'ticket' => $ticket,
         ]);
     }
 }
