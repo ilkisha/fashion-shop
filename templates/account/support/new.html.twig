@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+{% block title %}New Support Ticket{% endblock %}
+
+{% block body %}
+    <h1>New Support Ticket</h1>
+
+    {{ form_start(form) }}
+    {{ form_row(form.subject) }}
+    {{ form_row(form.order) }}
+    {{ form_row(form.message) }}
+
+    <button class="btn btn-primary" type="submit">Send</button>
+    <a class="btn" href="{{ path('account_support_index') }}">Cancel</a>
+    {{ form_end(form) }}
+{% endblock %}

@@ -48,11 +48,12 @@ class SupportTicket
     private ?string $message = null;
 
     #[ORM\Column(length: 20)]
+    #[Assert\NotBlank]
     #[Assert\Choice(choices: self::STATUS_CHOICES, message: 'Invalid status.')]
     private ?string $status = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
@@ -70,7 +71,7 @@ class SupportTicket
 
     public function __construct()
     {
-        $this->status = 'open';
+        $this->status = self::STATUS_OPEN;
         $this->createdAt = new \DateTimeImmutable();
     }
     public function getUser(): ?User

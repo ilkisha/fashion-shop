@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+{% block title %}Support{% endblock %}
+
+{% block body %}
+    <h1>Support</h1>
+
+    <p>
+        <a class="btn btn-primary" href="{{ path('account_support_new') }}">New ticket</a>
+    </p>
+
+    {% if tickets is empty %}
+        <p>No tickets yet.</p>
+    {% else %}
+        <table cellpadding="8" cellspacing="0" border="1" style="border-collapse:collapse; width:100%;">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Subject</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Order</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for t in tickets %}
+                <tr>
+                    <td>#{{ t.id }}</td>
+                    <td>{{ t.subject }}</td>
+                    <td>{{ t.status }}</td>
+                    <td>{{ t.createdAt|date('Y-m-d H:i') }}</td>
+                    <td>{{ t.order ? ('#' ~ t.order.id) : '—' }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
