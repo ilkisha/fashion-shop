@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_USER')]
-#[Route('/account/search_history', name: 'account_search_history_')]
+#[Route('/account/search-history', name: 'account_search_history_')]
 final class SearchHistoryController extends AbstractController
 {
     #[Route('', name: 'index', methods: ['GET'])]
