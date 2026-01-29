@@ -24,6 +24,8 @@ The project demonstrates a clean backend architecture, real-world e-commerce fea
 ### Public
 - Product catalog
 - Filters by gender and category
+- Product search
+- Custom 404 page for unknown routes
 - Product details page
 - Session-based shopping cart
 - Checkout flow
@@ -42,8 +44,19 @@ The project demonstrates a clean backend architecture, real-world e-commerce fea
 - Order creation (status: `pending`)
 - Snapshot pricing (prices stored in cents for orders)
 - Stripe Checkout integration (test mode)
-- Redirect to Stripe payment page
-- Success and cancel pages
+- Order confirmation via Stripe Webhooks
+- Order history (paid / pending)
+
+### User History & UX
+- Search history (session-based)
+- Viewed products history (session-based)
+- Cart quantity updates with dynamic recalculation
+
+### Support / Feedback
+- Logged-in users can submit support tickets
+- Tickets can be related to an order (optional)
+- Admin can manage tickets via admin panel
+- Admin replies and status are visible to users
 
 > ⚠️ **Important:**  
 > Payment confirmation is finalized via Stripe Webhooks  
@@ -64,8 +77,6 @@ This project uses **Stripe Checkout** in **test mode**.
 4242 4242 4242 4242  
 Any future date  
 CVC: 123
-
-
 
 ## 🐳 Run with Docker (Recommended)
 ## 🔔 Stripe Webhooks (Test Mode)
