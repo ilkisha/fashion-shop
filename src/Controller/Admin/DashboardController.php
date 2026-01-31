@@ -36,5 +36,6 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::linkToCrud('Products', 'fa fa-tags', Product::class);
         yield MenuItem::linkToCrud('Support Tickets', 'fa fa-life-ring', SupportTicket::class);
+        yield MenuItem::linkToRoute('Go to homepage', 'fa fa-arrow-left', 'app_home');
     }
 }
