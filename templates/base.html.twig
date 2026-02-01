@@ -159,6 +159,10 @@
 			border-radius: 999px;
 		}
 
+        .cart-badge.is-hidden {
+            display: none;
+        }
+
 		.nav-link.btn-primary {
 			background: var(--color-accent);
 			color: white;
@@ -727,7 +731,7 @@
 				<li>
 					<a href="{{ path('cart_show') }}" class="nav-link cart-link">
 						🛒 Cart
-						<span class="cart-badge">{{ cart_count }}</span>
+                        <span class="cart-badge {{ cart_count <= 0 ? 'is-hidden' : '' }}">{{ cart_count }}</span>
 					</a>
 				</li>
 				{% if app.user %}
